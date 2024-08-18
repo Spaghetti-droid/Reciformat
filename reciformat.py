@@ -1,16 +1,16 @@
 import argparse
-import html
 from pathlib import Path
 
 import formatter.markdownFormatter as mdf
 from reader.pathReader import PathReader
+from reader.urlReader import URLReader
 from parser.parser import Parser
 from parser.htmlJsonParser import HtmlJsonParser
 
 # TODO download images?
 
 DEFAULT_OUTPUT = "output"
-READERS = [PathReader()]
+READERS = [PathReader(), URLReader()]
 PARSERS = [HtmlJsonParser()]
 
 def initArgParser() -> argparse.Namespace:
