@@ -50,7 +50,9 @@ class HtmlJsonParser(psr.Parser):
     
     def author(self) -> str:
         author = self.recipe.get('author', {})
-        return author.get('name')
+        if isinstance(author, list):
+            return ', '.join([el.get('name', '') for el in author])
+        return author.get('name', '')
     
     def datePublished(self) -> str:
         date = self.recipe.get('datePublished')
