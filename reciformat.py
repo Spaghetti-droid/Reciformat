@@ -30,7 +30,7 @@ def main():
     doc = read(args.location)
     parser = parse(doc)
     formatted = mdf.format(parser)
-    print(html.unescape(formatted))
+    print(formatted)
     write(args.output, f'{parser.title()}.md', formatted)
     
 

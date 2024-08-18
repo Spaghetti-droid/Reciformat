@@ -24,7 +24,9 @@ class HtmlJsonParser(psr.Parser):
         jsonTags = soup.find_all('script', type='application/ld+json')
         found = False
         for jsonTag in jsonTags:
-            jsonObj = json.loads(jsonTag.string)
+            # In my test files, json is double escaped
+            jsonStr = html.unescape(html.unescape(jsonTag.string))
+            jsonObj = json.loads(jsonStr)
             if jsonObj['@type'] == 'Recipe':
                 self.recipe = jsonObj
                 found = True
@@ -37,7 +39,7 @@ class HtmlJsonParser(psr.Parser):
         return self.recipe.get('name','')
     
     def recipeYield(self) -> str:
-        return html.unescape(self.recipe.get('recipeYield',''))
+        return self.recipe.get('recipeYield','')
     
     def url(self) -> str:
         return self.recipe.get('url','')
@@ -48,7 +50,7 @@ class HtmlJsonParser(psr.Parser):
     
     def author(self) -> str:
         author = self.recipe.get('author', {})
-        return html.unescape(author.get('name'))
+        return author.get('name')
     
     def datePublished(self) -> str:
         date = self.recipe.get('datePublished')
@@ -63,7 +65,7 @@ class HtmlJsonParser(psr.Parser):
         return ''
     
     def ingredients(self) -> list:
-        return [html.unescape(elem) for elem in self.recipe.get('recipeIngredient', [])]
+        return self.recipe.get('recipeIngredient', [])
     
     def steps(self) -> list:
         ret = []
@@ -71,12 +73,12 @@ class HtmlJsonParser(psr.Parser):
         for step in steps:
             if step.get('@type', '') != 'HowToStep':
                 print(f"[Warning] Unexpected step type: {step.get('@type', '')}")
-            ret.append(html.unescape(step.get('text', '')))
+            ret.append(step.get('text', ''))
         return ret
         
     
     def description(self) -> str:
-        return html.unescape(self.recipe.get('description', ''))
+        return self.recipe.get('description', '')
     
     def rating(self) -> str:
         ar = self.recipe.get('aggregateRating', {})
@@ -97,7 +99,7 @@ class HtmlJsonParser(psr.Parser):
         return self.recipe.get('totalTime')
     
     def category(self) -> str:
-        return html.unescape(self.recipe.get('recipeCategory'))
+        return self.recipe.get('recipeCategory')
     
     
     

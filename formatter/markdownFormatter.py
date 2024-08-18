@@ -25,9 +25,6 @@ def format(p:Parser) -> str:
 ## Instructions
 
 {itemised(p.steps())}
-
-
-
     
 """
     
