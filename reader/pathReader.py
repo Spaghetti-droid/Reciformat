@@ -6,7 +6,8 @@ from pathlib import Path
 PATH_PATTERN = r'[\/\\]?(?:[^\/\\\n]+[\/\\]?)+'
 
 class PathReader(Reader):
-    
+    """Read a document from a path on the current machine
+    """
     def handles(self, input: str) -> bool:
         return re.fullmatch(PATH_PATTERN, input)
     

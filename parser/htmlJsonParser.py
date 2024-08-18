@@ -1,4 +1,4 @@
-import parser.parser as psr
+from parser.parser import Parser
 
 import json
 import html
@@ -9,8 +9,9 @@ DATETIME_FORMAT = "%d/%m/%Y, %H:%M:%S"
 
 # Note: I've had to put unescapes everywhere at the individual string level because unescape does not work on the whole json string
 # I do not understand why it has to be this way, but such is life
-class HtmlJsonParser(psr.Parser):
-    
+class HtmlJsonParser(Parser):
+    """Parses documents which hold recipes as JSONs with HTML pages
+    """
     def __init__(self) -> None:
         super().__init__()
         self.recipe = {}
@@ -24,7 +25,7 @@ class HtmlJsonParser(psr.Parser):
         jsonTags = soup.find_all('script', type='application/ld+json')
         found = False
         for jsonTag in jsonTags:
-            # In my test files, json is double escaped
+            # In my test files, json is double escaped.
             jsonStr = html.unescape(html.unescape(jsonTag.string))
             jsonObj = json.loads(jsonStr)
             if jsonObj['@type'] == 'Recipe':

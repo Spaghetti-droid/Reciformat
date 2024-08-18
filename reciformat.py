@@ -35,18 +35,40 @@ def main():
     
 
 def read(loc:str) -> str:
+    """Read the document at loc
+    Args:
+        loc (str): location of the document. Can be a URL or a path
+    Raises:
+        ValueError: If location format is not supported
+    Returns:
+        str: The contents of the document
+    """
     for r in READERS:
         if r.handles(loc):
             return r.read(loc)
     raise ValueError(f'Location not supported: {loc}')
 
 def parse(doc:str) -> Parser:
+    """Parse the document to a standard form for reformatting
+    Args:
+        doc (str): Document contents
+    Raises:
+        ValueError: If no parser can read the document
+    Returns:
+        Parser: A parser containing all info that was found in the document
+    """
     for p in PARSERS:
         if p.handles(doc) and p.parse(doc):
             return p
     raise ValueError(f'Document format not supported')
 
 def write(folderstr:str, name:str, formatted:str) -> None:
+    """Write the formatted document to a file
+    Args:
+        folderstr (str): Path to folder
+        name (str): new File name
+        formatted (str): Formatted contents
+    """
     folder = Path(folderstr)
     folder.mkdir(exist_ok=True, parents=True)
     file = folder / name
