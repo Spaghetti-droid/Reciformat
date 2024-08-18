@@ -50,7 +50,7 @@ def write(folderstr:str, name:str, formatted:str) -> None:
     folder = Path(folderstr)
     folder.mkdir(exist_ok=True, parents=True)
     file = folder / name
-    with open(file, 'x') as f:
+    with open(file, 'x', encoding='utf-8') as f:
         f.write(formatted)
 
 if __name__ == "__main__":
