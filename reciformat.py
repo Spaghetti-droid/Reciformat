@@ -8,6 +8,7 @@ from parser.parser import Parser
 from parser.htmlJsonParser import HtmlJsonParser
 
 # TODO download images?
+# TODO output as more universally readable format (html/odt/whatever)
 
 DEFAULT_OUTPUT = "output"
 READERS = [PathReader(), URLReader()]

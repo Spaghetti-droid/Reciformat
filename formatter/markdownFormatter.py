@@ -1,7 +1,4 @@
 from parser.parser import Parser
-import html
-
-
 
 def format(p:Parser) -> str:
     """Format the data in p as a markdown document
