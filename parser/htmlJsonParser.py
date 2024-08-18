@@ -51,6 +51,8 @@ class HtmlJsonParser(Parser):
     
     def author(self) -> str:
         author = self.recipe.get('author', {})
+        if isinstance(author, str):
+            return author
         if isinstance(author, list):
             return ', '.join([el.get('name', '') for el in author])
         return author.get('name', '')
