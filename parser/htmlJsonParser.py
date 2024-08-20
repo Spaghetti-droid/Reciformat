@@ -28,7 +28,7 @@ class HtmlJsonParser(Parser):
             # In my test files, json is double escaped.
             jsonStr = html.unescape(html.unescape(jsonTag.string))
             jsonObj = json.loads(jsonStr)
-            if jsonObj['@type'] == 'Recipe':
+            if jsonObj.get('@type') == 'Recipe':
                 self.recipe = jsonObj
                 found = True
                 break
