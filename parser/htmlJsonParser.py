@@ -31,11 +31,19 @@ class HtmlJsonParser(Parser):
         for jsonTag in jsonTags:
             # In my test files, json is double escaped.
             jsonStr = html.unescape(html.unescape(jsonTag.string))
-            jsonObj = json.loads(jsonStr)
-            if jsonObj.get('@type') == RECIPE_TAG or (isinstance(jsonObj, list) and RECIPE_TAG in jsonObj):
-                self.recipe = jsonObj
-                found = True
-                break
+            fullJson = json.loads(jsonStr)
+            # Most of the time there is one part per tag, and the @graph field doesn't exist. Most of the time.
+            jsonParts = fullJson.get('@graph')
+            if not jsonParts:
+                jsonParts = fullJson
+            
+            if not isinstance(jsonParts, list):
+                jsonParts = [jsonParts]
+            for jsonPart in jsonParts:
+                if jsonPart.get('@type') == RECIPE_TAG or (isinstance(jsonPart, list) and RECIPE_TAG in jsonPart):
+                    self.recipe = jsonPart
+                    found = True
+                    break
                 
         return found
         
