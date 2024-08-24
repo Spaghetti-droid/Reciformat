@@ -16,4 +16,5 @@ class URLReader(Reader):
         print(f'Making a request to {location}')
         r = requests.get(location)
         print(f'Status: {r.status_code}')
+        r.raise_for_status()
         return r.text
