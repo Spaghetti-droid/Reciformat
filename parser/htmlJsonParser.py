@@ -12,7 +12,9 @@ DATETIME_FORMAT = "%d/%m/%Y, %H:%M:%S"
 RECIPE = 'Recipe'
 TYPE_TAG = '@type'
 
-class JsonSection(InstructionSection):        
+class JsonSection(InstructionSection):  
+    """ A subsection of a JSON recipeInstructions object
+    """      
     def __init__(self, name:str = '') -> None:
         self.name = name
         self.steps = []
@@ -24,6 +26,10 @@ class JsonSection(InstructionSection):
         return self.steps
         
     def add(self, steps:list) -> None:
+        """ Parse and add steps to self
+        Args:
+            steps (list): A list containing elements that are Text, HowToStep, or HowToSection
+        """
         for step in steps:
             if isinstance(step, str):
                 self.steps.append(step)
@@ -31,6 +37,10 @@ class JsonSection(InstructionSection):
                 self.addObj(step)
     
     def addObj(self, step:dict) -> None:
+        """ Add a HowToStep or HowToSection to self
+        Args:
+            step (dict): HowToStep or HowToSection
+        """
         type = step.get(TYPE_TAG)
         if type == 'HowToStep':
             self.steps.append(step.get('text', ''))

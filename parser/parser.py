@@ -1,6 +1,26 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
+class InstructionSection(ABC):
+    """Represents a section in the instructions
+    """
+    
+    @abstractmethod
+    def getName(self) -> str:
+        """
+        Returns:
+            str: Section name
+        """
+        pass
+    
+    @abstractmethod
+    def getSteps(self) -> list:
+        """
+        Returns:
+            list: List of steps. These can either be strings or other InstructionSections
+        """
+        pass
+
 class Parser(ABC):
     """Abstract class representing a Parser
     """
@@ -57,7 +77,11 @@ class Parser(ABC):
         pass
     
     @abstractmethod
-    def steps(self) -> list:
+    def steps(self) -> InstructionSection:
+        """
+        Returns:
+            InstructionSection: The top instruction section that lists all steps to perform
+        """
         pass
     
     @abstractmethod
@@ -86,14 +110,4 @@ class Parser(ABC):
     
     @abstractmethod
     def category(self) -> str:
-        pass
-    
-class InstructionSection(ABC):
-    
-    @abstractmethod
-    def getName(self) -> str:
-        pass
-    
-    @abstractmethod
-    def getSteps(self) -> list:
         pass

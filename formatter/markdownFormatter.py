@@ -62,6 +62,15 @@ def bulletPoints(l: list) -> str:
     return ret
 
 def instructions(sec: InstructionSection, depth:int = 0) -> str:
+    """Take Instruction section and format the information. 
+        Intended usage is to call the top section with depth 0, lower levels being handled recursively
+    Args:
+        sec (InstructionSection): An object representing a section of the instructions
+        depth (int, optional): Depth of the section. Top is 0, a subsection is 1, subsub is 2, etc... Defaults to 0.
+
+    Returns:
+        str: Formatted string
+    """
     stepsStr = ''
     if sec.getName() and depth:
         stepsStr += f'\n##{'#'*depth} {sec.getName()}\n\n'
