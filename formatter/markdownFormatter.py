@@ -35,6 +35,8 @@ def opt(prefix: str, value: str, suffix:str = '') -> str:
     """
     if not value:
         return ''
+    if isinstance(value, list):
+        value = ', '.join(value)
     return f'{prefix}{value}{suffix}'
 
 def optList(l:list) -> str:
