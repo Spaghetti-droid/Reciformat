@@ -140,16 +140,16 @@ class HtmlJsonParser(Parser):
         return ar.get('ratingCount','')
     
     def prepTime(self) -> str:
-        return HtmlJsonParser.toHumanDuration(self.recipe.get('prepTime'))
+        return HtmlJsonParser.toHumanDuration(self.recipe.get('prepTime', ''))
     
     def cookTime(self) -> str:
-        return HtmlJsonParser.toHumanDuration(self.recipe.get('cookTime'))
+        return HtmlJsonParser.toHumanDuration(self.recipe.get('cookTime', ''))
     
     def totalTime(self) -> str:
-        return HtmlJsonParser.toHumanDuration(self.recipe.get('totalTime'))
+        return HtmlJsonParser.toHumanDuration(self.recipe.get('totalTime', ''))
     
     def category(self) -> str:
-        return HtmlJsonParser.toHumanDuration(self.recipe.get('recipeCategory'))
+        return self.recipe.get('recipeCategory', '')
     
     @staticmethod
     def toHumanDuration(time:str) -> str:
