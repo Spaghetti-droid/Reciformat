@@ -1,4 +1,4 @@
-from parser.parser import Parser
+from parser.parser import Parser, InstructionSection
 
 def format(p:Parser) -> str:
     """Format the data in p as a markdown document
@@ -20,7 +20,7 @@ def format(p:Parser) -> str:
 
 ## Instructions
 
-{itemised(p.steps())}    
+{instructions(p.steps())}    
 """
     
 def opt(prefix: str, value: str, suffix:str = '') -> str:
@@ -59,16 +59,17 @@ def bulletPoints(l: list) -> str:
         ret += f' - {elem}\n'
     return ret
 
-def itemised(l: list) -> str:
-    """Formats elements in list as an ordered list
-    Args:
-        l (list): list of strings
-    Returns:
-        str: A numbered list, one entry per element
-    """
-    ret = ''
+def instructions(sec: InstructionSection, depth:int = 0) -> str:
+    stepsStr = ''
+    if sec.getName() and depth:
+        stepsStr += f'\n##{'#'*depth} {sec.getName()}\n\n'
+    
     i = 1
-    for elem in l:
-        ret += f' {i}. {elem}\n'
-        i += 1
-    return ret
+    for step in sec.getSteps():
+        if isinstance(step, str):
+            stepsStr += f' {i}. {step}\n'
+            i += 1
+        elif isinstance(step, InstructionSection):
+            stepsStr += instructions(step, depth+1)
+    
+    return stepsStr

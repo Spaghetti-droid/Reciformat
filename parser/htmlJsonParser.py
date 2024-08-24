@@ -1,4 +1,4 @@
-from parser.parser import Parser
+from parser.parser import Parser, InstructionSection
 
 import re
 import json
@@ -9,10 +9,38 @@ from datetime import datetime
 DURATION_PATTERN = re.compile(r'P([^T]*)(?:T(.*))')
 DURATION_SUB_PATTERN = re.compile(r'(\d+(?:\.\d+)?)(\w)')
 DATETIME_FORMAT = "%d/%m/%Y, %H:%M:%S"
-RECIPE_TAG = 'Recipe'
+RECIPE = 'Recipe'
+TYPE_TAG = '@type'
 
-# Note: I've had to put unescapes everywhere at the individual string level because unescape does not work on the whole json string
-# I do not understand why it has to be this way, but such is life
+class JsonSection(InstructionSection):        
+    def __init__(self, name:str = '') -> None:
+        self.name = name
+        self.steps = []
+        
+    def getName(self) -> str:
+        return self.name
+    
+    def getSteps(self) -> list:
+        return self.steps
+        
+    def add(self, steps:list) -> None:
+        for step in steps:
+            if isinstance(step, str):
+                self.steps.append(step)
+            elif isinstance(step, dict):
+                self.addObj(step)
+    
+    def addObj(self, step:dict) -> None:
+        type = step.get(TYPE_TAG)
+        if type == 'HowToStep':
+            self.steps.append(step.get('text', ''))
+        elif type == 'HowToSection':
+            subsection = JsonSection(step.get('name',''))
+            subsection.add(step.get('itemListElement', []))
+            self.steps.append(subsection)
+        else:
+            print(f'[Warning] Step type not recognised: {type}')
+            
 class HtmlJsonParser(Parser):
     """Parses documents which hold recipes as JSONs with HTML pages
     """
@@ -40,7 +68,7 @@ class HtmlJsonParser(Parser):
             if not isinstance(jsonParts, list):
                 jsonParts = [jsonParts]
             for jsonPart in jsonParts:
-                if jsonPart.get('@type') == RECIPE_TAG or (isinstance(jsonPart, list) and RECIPE_TAG in jsonPart):
+                if jsonPart.get(TYPE_TAG) == RECIPE or (isinstance(jsonPart, list) and RECIPE in jsonPart):
                     self.recipe = jsonPart
                     found = True
                     break
@@ -84,15 +112,11 @@ class HtmlJsonParser(Parser):
     def ingredients(self) -> list:
         return self.recipe.get('recipeIngredient', [])
     
-    def steps(self) -> list:
-        ret = []
-        steps = self.recipe.get('recipeInstructions', [])
-        for step in steps:
-            if step.get('@type', '') != 'HowToStep':
-                print(f"[Warning] Unexpected step type: {step.get('@type', '')}")
-            ret.append(step.get('text', ''))
-        return ret
-        
+    def steps(self) -> InstructionSection:
+        steps =  self.recipe.get('recipeInstructions', [])
+        top = JsonSection()
+        top.add(steps)
+        return top        
     
     def description(self) -> str:
         return self.recipe.get('description', '')

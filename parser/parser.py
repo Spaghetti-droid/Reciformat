@@ -87,3 +87,13 @@ class Parser(ABC):
     @abstractmethod
     def category(self) -> str:
         pass
+    
+class InstructionSection(ABC):
+    
+    @abstractmethod
+    def getName(self) -> str:
+        pass
+    
+    @abstractmethod
+    def getSteps(self) -> list:
+        pass
