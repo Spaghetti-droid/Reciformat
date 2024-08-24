@@ -9,6 +9,7 @@ from datetime import datetime
 DURATION_PATTERN = re.compile(r'P([^T]*)(?:T(.*))')
 DURATION_SUB_PATTERN = re.compile(r'(\d+(?:\.\d+)?)(\w)')
 DATETIME_FORMAT = "%d/%m/%Y, %H:%M:%S"
+RECIPE_TAG = 'Recipe'
 
 # Note: I've had to put unescapes everywhere at the individual string level because unescape does not work on the whole json string
 # I do not understand why it has to be this way, but such is life
@@ -31,7 +32,7 @@ class HtmlJsonParser(Parser):
             # In my test files, json is double escaped.
             jsonStr = html.unescape(html.unescape(jsonTag.string))
             jsonObj = json.loads(jsonStr)
-            if jsonObj.get('@type') == 'Recipe':
+            if jsonObj.get('@type') == RECIPE_TAG or (isinstance(jsonObj, list) and RECIPE_TAG in jsonObj):
                 self.recipe = jsonObj
                 found = True
                 break
