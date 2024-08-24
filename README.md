@@ -32,7 +32,6 @@ Copy the source files and directories to where you want them.
 #### Requirements and dependencies
 
 The .py version of reciformat needs **python 3.12** to run. Probably. I haven't tested earlier versions. It also depends on the following libraries that you will need to install:
- - argparse
  - beautifulsoup4
  - requests
  - validators
