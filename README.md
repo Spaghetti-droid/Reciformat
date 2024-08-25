@@ -6,7 +6,8 @@ Currently, the recipe is saved locally as a markdown file which is stored by def
 
 This is a command line program and is run in the terminal either by using the reciformat.py file (on any distribution) or by using the reciformat.exe file (on windows). As usual the -h option gives an overview how to use the program:
 
-    reciformat.exe -h                                        
+    reciformat.exe -h     
+    
     Extracts recipe information from a document and reformats it as a new file.                                                                                                                                                                     
     positional arguments:                                                                                                     
         location              Path or URL towards the recipe document                                                                                                                                                                                 
