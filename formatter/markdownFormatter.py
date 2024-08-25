@@ -8,7 +8,7 @@ def format(p:Parser) -> str:
 # {p.title()}
 
 {opt('<', p.url(), '>   ')}     
-{optList([opt('Author ', p.author()), opt('Published ', p.datePublished()), opt('Modified ', p.datePublished())])}  
+{optList([opt('Author: ', p.author()), opt('Published: ', p.datePublished()), opt('Modified: ', p.datePublished())])}  
 
 {p.description()}  
 
