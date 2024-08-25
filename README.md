@@ -6,18 +6,9 @@ Currently, the recipe is saved locally as a markdown file which is stored by def
 
 This is a command line program and is run in the terminal either by using the reciformat.py file (on any distribution) or by using the reciformat.exe file (on windows). As usual the -h option gives an overview how to use the program:
 
-    reciformat.exe -h
-    usage: reciformat.py [-h] [-o OUTPUT] location
-
-    Extracts recipe information from a document and reformats it as a new file.
-
-    positional arguments:
-    location              Path or URL towards the recipe document
-
-    options:
-    -h, --help            show this help message and exit
-    -o OUTPUT, --output OUTPUT
-                            The directory where the result will be saved. Default: output
+    reciformat.exe -h                                        
+    
+    usage: reciformat.py [-h] [-o OUTPUT] [-c] location                                                                                                                                                                                             Extracts recipe information from a document and reformats it as a new file.                                                                                                                                                                     positional arguments:                                                                                                     location              Path or URL towards the recipe document                                                                                                                                                                                 options:                                                                                                                  -h, --help            show this help message and exit                                                                   -o OUTPUT, --output OUTPUT                                                                                                                    The directory where the result will be saved. Default: output                                     -c, --use-chrome      Some websites need javascript to be accessed. For this we can use a browser that is already installed on the machine. Use this option if normal access to the site causes 4xx status errors    
 
 ## Installing
 
@@ -35,6 +26,7 @@ The .py version of reciformat needs **python 3.12** to run. Probably. I haven't 
  - beautifulsoup4
  - requests
  - validators
+ - selenium
   
 Any missing libraries should be installed with
 
@@ -54,7 +46,11 @@ If you'd rather specify a destination you can use
 
 If you want to load a local html file just give the program the path to the file:
 
-    reciformat.exe path/to/brownies.htm    
+    reciformat.exe path/to/brownies.htm   
+
+If you want to load the website via your local chrome installation (useful for some websites which won't be accessible using the default method): 
+
+    reciformat.exe -c https://www.bbcgoodfood.com/recipes/easy-brownies
 
 ## Generating the exe
 
