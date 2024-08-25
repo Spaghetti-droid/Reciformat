@@ -18,7 +18,7 @@ def initArgParser(defaultOutput:str) -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(prog="reciformat.py", description="Extracts recipe information from a document and reformats it as a new file.")
     parser.add_argument("location", help="Path or URL towards the recipe document")
-    parser.add_argument("-o", "--output", help="The directory where the result will be saved. Default: " + defaultOutput, default=defaultOutput)
+    parser.add_argument("-o", "--output", help=f"The directory where the result will be saved. Default: '{defaultOutput}'", default=defaultOutput)
     parser.add_argument("-c", "--use-chrome", action='store_true', dest="useChrome", help="Some websites need javascript to be accessed. For this we can use a browser that is already installed on the machine. Use this option if normal access to the site causes 4xx status errors")
     return parser.parse_args()
 
