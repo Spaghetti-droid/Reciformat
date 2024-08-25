@@ -7,8 +7,16 @@ Currently, the recipe is saved locally as a markdown file which is stored by def
 This is a command line program and is run in the terminal either by using the reciformat.py file (on any distribution) or by using the reciformat.exe file (on windows). As usual the -h option gives an overview how to use the program:
 
     reciformat.exe -h                                        
-    
-    usage: reciformat.py [-h] [-o OUTPUT] [-c] location                                                                                                                                                                                             Extracts recipe information from a document and reformats it as a new file.                                                                                                                                                                     positional arguments:                                                                                                     location              Path or URL towards the recipe document                                                                                                                                                                                 options:                                                                                                                  -h, --help            show this help message and exit                                                                   -o OUTPUT, --output OUTPUT                                                                                                                    The directory where the result will be saved. Default: output                                     -c, --use-chrome      Some websites need javascript to be accessed. For this we can use a browser that is already installed on the machine. Use this option if normal access to the site causes 4xx status errors    
+    Extracts recipe information from a document and reformats it as a new file.                                                                                                                                                                     
+    positional arguments:                                                                                                     
+        location              Path or URL towards the recipe document                                                                                                                                                                                 
+    options:                                                                                                                  
+        -h, --help            show this help message and exit                                                                   
+        -o OUTPUT, --output OUTPUT                                                                                                                    
+                              The directory where the result will be saved. Default: 'output'                                   
+        -c, --use-chrome      Some websites need javascript to be accessed. For this we can use a browser that is already                       
+                              installed on the machine. Use this option if normal access to the site causes 4xx status                            
+                              errors   
 
 ## Installing
 
