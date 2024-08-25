@@ -25,7 +25,7 @@ class Parser(ABC):
     """Abstract class representing a Parser
     """
     @abstractmethod
-    def handles(self, input:str) -> bool:
+    def handles(self, input:any) -> bool:
         """Checks if the parser thinks it can parse the document
         Args:
             input (str): the document contents
@@ -35,7 +35,7 @@ class Parser(ABC):
         pass
     
     @abstractmethod
-    def parse(self, input:str) -> bool:
+    def parse(self, input:any) -> bool:
         """Parse the document, extracting all fields of interest from it
         Args:
             input (str): The document contents

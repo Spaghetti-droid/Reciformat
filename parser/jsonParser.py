@@ -51,7 +51,7 @@ class JsonSection(InstructionSection):
         else:
             print(f'[Warning] Step type not recognised: {type}')
             
-class HtmlJsonParser(Parser):
+class JsonParser(Parser):
     """Parses documents which hold recipes as JSONs with HTML pages
     """
     def __init__(self) -> None:
@@ -62,26 +62,29 @@ class HtmlJsonParser(Parser):
         # Only one parser for now
         return True
     
-    def parse(self, input:str) -> bool:
-        soup = BeautifulSoup(input, features="html.parser")
-        jsonTags = soup.find_all('script', type='application/ld+json')
-        found = False
-        for jsonTag in jsonTags:
-            # In my test files, json is double escaped.
-            jsonStr = html.unescape(html.unescape(jsonTag.string))
-            fullJson = json.loads(jsonStr)
-            # Most of the time there is one part per tag, and the @graph field doesn't exist. Most of the time.
-            jsonParts = fullJson.get('@graph')
-            if not jsonParts:
-                jsonParts = fullJson
-            
-            if not isinstance(jsonParts, list):
-                jsonParts = [jsonParts]
-            for jsonPart in jsonParts:
-                if jsonPart.get(TYPE_TAG) == RECIPE or (isinstance(jsonPart, list) and RECIPE in jsonPart):
-                    self.recipe = jsonPart
-                    found = True
-                    break
+    def parse(self, input:any) -> bool:  
+        try:      
+            if(not isinstance(input, list)):
+                input = [input]
+            for jsonTag in input:
+                # In my test files, json is double escaped.
+                jsonStr = html.unescape(html.unescape(jsonTag.string))
+                fullJson = json.loads(jsonStr)
+                # Most of the time there is one part per tag, and the @graph field doesn't exist. Most of the time.
+                jsonParts = fullJson.get('@graph')
+                if not jsonParts:
+                    jsonParts = fullJson
+                
+                if not isinstance(jsonParts, list):
+                    jsonParts = [jsonParts]
+                for jsonPart in jsonParts:
+                    if jsonPart.get(TYPE_TAG) == RECIPE or (isinstance(jsonPart, list) and RECIPE in jsonPart):
+                        self.recipe = jsonPart
+                        found = True
+                        break
+        except Exception as e:
+            print(f'Parsing json failed: {e}')
+            found = False
                 
         return found
         
@@ -140,13 +143,13 @@ class HtmlJsonParser(Parser):
         return ar.get('ratingCount','')
     
     def prepTime(self) -> str:
-        return HtmlJsonParser.toHumanDuration(self.recipe.get('prepTime', ''))
+        return JsonParser.toHumanDuration(self.recipe.get('prepTime', ''))
     
     def cookTime(self) -> str:
-        return HtmlJsonParser.toHumanDuration(self.recipe.get('cookTime', ''))
+        return JsonParser.toHumanDuration(self.recipe.get('cookTime', ''))
     
     def totalTime(self) -> str:
-        return HtmlJsonParser.toHumanDuration(self.recipe.get('totalTime', ''))
+        return JsonParser.toHumanDuration(self.recipe.get('totalTime', ''))
     
     def category(self) -> str:
         return self.recipe.get('recipeCategory', '')
@@ -165,12 +168,12 @@ class HtmlJsonParser(Parser):
             longDuration = m.group(1)
             if longDuration:
                 for (number, unit) in DURATION_SUB_PATTERN.findall(longDuration):
-                    ret.append(HtmlJsonParser.toHuman(number, unit, True))
+                    ret.append(JsonParser.toHuman(number, unit, True))
              
             shortDuration = m.group(2)   
             if shortDuration:
                 for (number, unit) in DURATION_SUB_PATTERN.findall(shortDuration):
-                    ret.append(HtmlJsonParser.toHuman(number, unit, False))
+                    ret.append(JsonParser.toHuman(number, unit, False))
                     
             return ', '.join(ret)
         
@@ -190,9 +193,9 @@ class HtmlJsonParser(Parser):
         """
         ret = number
         if isLong:
-            ret += ' ' + HtmlJsonParser.longUnit(unit)
+            ret += ' ' + JsonParser.longUnit(unit)
         else:
-            ret += ' ' + HtmlJsonParser.shortUnit(unit)
+            ret += ' ' + JsonParser.shortUnit(unit)
         if float(number)>1:
             ret += 's'
         return ret
@@ -238,6 +241,17 @@ class HtmlJsonParser(Parser):
                 print(f'[WARNING] Unit not recognised: {unit}')
                 return unit
         
+class HtmlJsonParser(JsonParser):
+    """Parses documents which hold recipes as JSONs within HTML pages
+    """
+    def handles(self, input:str) -> bool:
+        # More efficient just to try parsing
+        return True
+    
+    def parse(self, input:str) -> bool:
+        soup = BeautifulSoup(input, features="html.parser")
+        jsonTags = soup.find_all('script', type='application/ld+json')
+        return super().parse(jsonTags)
         
     
     

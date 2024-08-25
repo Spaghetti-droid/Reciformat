@@ -5,14 +5,14 @@ import formatter.markdownFormatter as mdf
 from reader.pathReader import PathReader
 from reader.urlReader import URLReader
 from parser.parser import Parser
-from parser.htmlJsonParser import HtmlJsonParser
+from parser.jsonParser import JsonParser, HtmlJsonParser
 
 # TODO download images?
 # TODO output as more universally readable format (html/odt/whatever)
 
 DEFAULT_OUTPUT = "output"
 READERS = [PathReader(), URLReader()]
-PARSERS = [HtmlJsonParser()]
+PARSERS = [HtmlJsonParser(), JsonParser()]
 
 def initArgParser() -> argparse.Namespace:
     """Defines the arguments that the program can use
@@ -26,7 +26,7 @@ def initArgParser() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def main():    
+def main():  
     args = initArgParser()
     doc = read(args.location)
     parser = parse(doc)
@@ -35,7 +35,7 @@ def main():
     write(args.output, f'{parser.title()}.md', formatted)
     
 
-def read(loc:str) -> str:
+def read(loc:str) -> any:
     """Read the document at loc
     Args:
         loc (str): location of the document. Can be a URL or a path
@@ -49,7 +49,7 @@ def read(loc:str) -> str:
             return r.read(loc)
     raise ValueError(f'Location not supported: {loc}')
 
-def parse(doc:str) -> Parser:
+def parse(doc:any) -> Parser:
     """Parse the document to a standard form for reformatting
     Args:
         doc (str): Document contents
