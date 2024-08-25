@@ -19,11 +19,16 @@ class SeleniumReader(Reader):
         print(f'Making a request to {location}')
         chromeOptions = Options()
         chromeOptions.add_argument("--headless=new")
-        driver = webdriver.Chrome(options=chromeOptions)
-        driver.get(location)
-        scripts = driver.find_elements(By.XPATH, "//script[@type='application/ld+json']")
-        jsons = []
-        for script in scripts:
-            jsons.append(script.get_attribute('innerHTML'))
-            
-        return jsons
+        driver = None
+        try:
+            driver = webdriver.Chrome(options=chromeOptions)
+            driver.get(location)
+            scripts = driver.find_elements(By.XPATH, "//script[@type='application/ld+json']")
+            jsons = []
+            for script in scripts:
+                jsons.append(script.get_attribute('innerHTML'))
+                
+            return jsons
+        finally:
+            if driver:
+                driver.quit()
