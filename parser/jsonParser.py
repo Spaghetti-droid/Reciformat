@@ -52,39 +52,40 @@ class JsonSection(InstructionSection):
             print(f'[Warning] Step type not recognised: {type}')
             
 class JsonParser(Parser):
-    """Parses documents which hold recipes as JSONs with HTML pages
+    """Parses a list of json-formatted strings to find the recipe
     """
     def __init__(self) -> None:
         super().__init__()
         self.recipe = {}
     
-    def handles(self, input:str) -> bool:
-        # Only one parser for now
-        return True
+    def handles(self, input:any) -> bool:
+        return isinstance(input, str | list | bytearray | bytes)
     
-    def parse(self, input:any) -> bool:  
-        try:      
-            if(not isinstance(input, list)):
-                input = [input]
-            for jsonTag in input:
+    def parse(self, input:any) -> bool:      
+        if(not isinstance(input, list)):
+            input = [input]
+        found = False
+        for jsonStr in input:
+            try:
                 # In my test files, json is double escaped.
-                jsonStr = html.unescape(html.unescape(jsonTag.string))
+                jsonStr = html.unescape(html.unescape(jsonStr))
                 fullJson = json.loads(jsonStr)
-                # Most of the time there is one part per tag, and the @graph field doesn't exist. Most of the time.
-                jsonParts = fullJson.get('@graph')
-                if not jsonParts:
-                    jsonParts = fullJson
                 
+                # Handle the varied and possible top level json structures
+                jsonParts = fullJson
+                if isinstance(jsonParts, dict):                    
+                    jsonParts = jsonParts.get('@graph', jsonParts)                
                 if not isinstance(jsonParts, list):
                     jsonParts = [jsonParts]
+                    
                 for jsonPart in jsonParts:
-                    if jsonPart.get(TYPE_TAG) == RECIPE or (isinstance(jsonPart, list) and RECIPE in jsonPart):
+                    jsonType = jsonPart.get(TYPE_TAG)
+                    if jsonType == RECIPE or (isinstance(jsonType, list) and RECIPE in jsonType):
                         self.recipe = jsonPart
                         found = True
                         break
-        except Exception as e:
-            print(f'Parsing json failed: {e}')
-            found = False
+            except Exception as e:
+                print(f'Parsing json failed: {e}')
                 
         return found
         
@@ -244,14 +245,15 @@ class JsonParser(Parser):
 class HtmlJsonParser(JsonParser):
     """Parses documents which hold recipes as JSONs within HTML pages
     """
-    def handles(self, input:str) -> bool:
-        # More efficient just to try parsing
-        return True
+    def handles(self, input:any) -> bool:
+        # Parsing will crash on not string
+        return isinstance(input, str)
     
     def parse(self, input:str) -> bool:
         soup = BeautifulSoup(input, features="html.parser")
         jsonTags = soup.find_all('script', type='application/ld+json')
-        return super().parse(jsonTags)
+        jsonStrs = [tag.string for tag in jsonTags]
+        return super().parse(jsonStrs)
         
     
     

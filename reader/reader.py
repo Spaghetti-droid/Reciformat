@@ -14,7 +14,7 @@ class Reader(ABC):
         pass
     
     @abstractmethod
-    def read(self, location:str) -> str:
+    def read(self, location:str) -> any:
         """Read the contents of the document at location
         Args:
             location (str): A path or URL or some other identifier

@@ -4,15 +4,13 @@ from pathlib import Path
 import formatter.markdownFormatter as mdf
 from reader.pathReader import PathReader
 from reader.urlReader import URLReader
+from reader.seleniumReader import SeleniumReader
 from parser.parser import Parser
 from parser.jsonParser import JsonParser, HtmlJsonParser
 
-# TODO download images?
-# TODO output as more universally readable format (html/odt/whatever)
+### Init constants ###
 
 DEFAULT_OUTPUT = "output"
-READERS = [PathReader(), URLReader()]
-PARSERS = [HtmlJsonParser(), JsonParser()]
 
 def initArgParser() -> argparse.Namespace:
     """Defines the arguments that the program can use
@@ -23,16 +21,32 @@ def initArgParser() -> argparse.Namespace:
     parser = argparse.ArgumentParser(prog="reciformat.py", description="Extracts recipe information from a document and reformats it as a new file.")
     parser.add_argument("location", help="Path or URL towards the recipe document")
     parser.add_argument("-o", "--output", help="The directory where the result will be saved. Default: " + str(DEFAULT_OUTPUT), default=DEFAULT_OUTPUT)
+    parser.add_argument("-c", "--use-chrome", action='store_true', dest="useChrome", help="Some websites need javascript to be accessed. Use this option if normal access to the site causes 4xx status errors")
     return parser.parse_args()
 
+def initReaderList(args:argparse.Namespace) -> list:
+    readers = []
+    if args.useChrome:
+        readers.append(SeleniumReader())
+    else:
+        readers.append(URLReader())
+        
+    readers.append(PathReader())
+    
+    return readers
+
+ARGS = initArgParser()
+READERS = initReaderList(ARGS)
+PARSERS = [HtmlJsonParser(), JsonParser()]
+
+### Execution ###
 
 def main():  
-    args = initArgParser()
-    doc = read(args.location)
+    doc = read(ARGS.location)
     parser = parse(doc)
     formatted = mdf.format(parser)
     print(formatted)
-    write(args.output, f'{parser.title()}.md', formatted)
+    write(ARGS.output, f'{parser.title()}.md', formatted)
     
 
 def read(loc:str) -> any:
