@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import validators
+import sys
 
 class SeleniumReader(Reader):
     """Gets the document from a URL Using a web browser
@@ -16,7 +17,7 @@ class SeleniumReader(Reader):
         
     
     def read(self, location: str) -> list:
-        print(f'Making a request to {location}')
+        print(f'Making a request to {location}', file=sys.stderr)
         chromeOptions = Options()
         chromeOptions.add_argument("--headless=new")
         driver = None

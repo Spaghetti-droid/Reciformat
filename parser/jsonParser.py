@@ -3,6 +3,7 @@ from parser.parser import Parser, InstructionSection
 import re
 import json
 import html
+import sys
 from bs4 import BeautifulSoup
 from datetime import datetime
 
@@ -49,7 +50,7 @@ class JsonSection(InstructionSection):
             subsection.add(step.get('itemListElement', []))
             self.steps.append(subsection)
         else:
-            print(f'[Warning] Step type not recognised: {type}')
+            print(f'[Warning] Step type not recognised: {type}', file=sys.stderr)
             
 class JsonParser(Parser):
     """Parses a list of json-formatted strings to find the recipe
@@ -85,7 +86,7 @@ class JsonParser(Parser):
                         found = True
                         break
             except Exception as e:
-                print(f'Parsing json failed: {e}')
+                print(f'Parsing json failed: {e}', file=sys.stderr)
                 
         return found
         
@@ -178,7 +179,7 @@ class JsonParser(Parser):
                     
             return ', '.join(ret)
         
-        print(f'[WARNING] Duration in unexpected format!')
+        print(f'[WARNING] Duration in unexpected format!', file=sys.stderr)
         return time
        
     @staticmethod
@@ -220,7 +221,7 @@ class JsonParser(Parser):
             case 'D': 
                 return 'day'
             case _:
-                print(f'[WARNING] Unit not recognised: {unit}')
+                print(f'[WARNING] Unit not recognised: {unit}', file=sys.stderr)
                 return unit
     @staticmethod      
     def shortUnit(unit:str) -> str:
@@ -239,7 +240,7 @@ class JsonParser(Parser):
             case 'S':
                 return 'second'
             case _:
-                print(f'[WARNING] Unit not recognised: {unit}')
+                print(f'[WARNING] Unit not recognised: {unit}', file=sys.stderr)
                 return unit
         
 class HtmlJsonParser(JsonParser):

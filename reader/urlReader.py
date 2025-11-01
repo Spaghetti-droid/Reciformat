@@ -2,6 +2,7 @@ from reader.reader import Reader
 
 import requests
 import validators
+import sys
 
 class URLReader(Reader):
     """Gets the document from a URL
@@ -13,8 +14,8 @@ class URLReader(Reader):
         
     
     def read(self, location: str) -> str:
-        print(f'Making a request to {location}')
+        print(f'Making a request to {location}', file=sys.stderr)
         r = requests.get(location)
-        print(f'Status: {r.status_code}')
+        print(f'Status: {r.status_code}', file=sys.stderr)
         r.raise_for_status()
         return r.text
