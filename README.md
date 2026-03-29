@@ -37,9 +37,9 @@ The .py version of reciformat needs **python 3.12** to run. Probably. I haven't 
  - validators
  - selenium
   
-Any missing libraries should be installed with
+Use the requirements.txt file to add missing dependencies
 
-    pip install <library name>
+    pip install -r requirements.txt
 
 ## Examples
 
