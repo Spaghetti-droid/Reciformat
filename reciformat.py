@@ -1,5 +1,6 @@
 import argparse
 from pathlib import Path
+from enum import Enum
 
 from formatter.formatter import Formatter
 from formatter.markdownFormatter import MDFormatter
@@ -12,7 +13,14 @@ from parser.jsonParser import JsonParser, HtmlJsonParser
 
 ### Init constants ###
 
-def initArgParser(defaultOutput:str) -> argparse.Namespace:
+class Format(Enum):
+    """
+    All output formats supported by reciformat
+    """
+    HTML = 'html'
+    MD = 'md'
+
+def initArgParser(defaultFormat:Format) -> argparse.Namespace:
     """Defines the arguments that the program can use
 
     Returns:
@@ -20,6 +28,7 @@ def initArgParser(defaultOutput:str) -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser(prog="reciformat.py", description="Extracts recipe information from a document and reformats it as a new file.")
     parser.add_argument("location", help="Path or URL towards the recipe document")
+    parser.add_argument("-f", "--format", help=f"Format of output document. Can be 'html' or 'md' (for markdown). Default: {defaultFormat.value}.", type=Format, default=defaultFormat)
     parser.add_argument("-o", "--output", help="A directory where the result should be output.")
     parser.add_argument("-c", "--use-chrome", action='store_true', dest="useChrome", help="Some websites need javascript to be accessed. For this we can use a browser that is already installed on the machine. Use this option if normal access to the site causes 4xx status errors")
     return parser.parse_args()
@@ -35,17 +44,18 @@ def initReaderList(args:argparse.Namespace) -> list:
     
     return readers
 
-DEFAULT_OUTPUT = "output"
-ARGS = initArgParser(DEFAULT_OUTPUT)
+DEFAULT_FORMAT = Format.HTML
+ARGS = initArgParser(DEFAULT_FORMAT)
 READERS = initReaderList(ARGS)
 PARSERS = [HtmlJsonParser(), JsonParser()]
 
 ### Execution ###
 
 def main():  
+    # Choose formatter first to avoid querying url if format is invalid
+    formatter = chooseFormatter(ARGS.format)
     doc = read(ARGS.location)
     parser = parse(doc)
-    formatter = HTMLFormatter()
     formatted = formatter.format(parser)
     print(formatted)
     if ARGS.output:
@@ -78,7 +88,21 @@ def parse(doc:any) -> Parser:
     for p in PARSERS:
         if p.handles(doc) and p.parse(doc):
             return p
-    raise ValueError(f'Document format not supported')
+    raise ValueError('Document format not supported')
+
+def chooseFormatter(format: str) -> Formatter:
+    """
+    Choose the formatter that matches the requested format. Raise an exception if a 
+    matching Formatter cannot be found.
+    """
+    match format:
+        case Format.HTML:
+            return HTMLFormatter()
+        case Format.MD:
+            return MDFormatter()
+        case _:
+            raise ValueError(f"Output format not recognised: {format}")
+            
 
 def write(folderstr:str, name:str, formatted:str) -> None:
     """Write the formatted document to a file
