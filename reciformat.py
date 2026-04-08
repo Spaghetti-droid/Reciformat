@@ -1,7 +1,9 @@
 import argparse
 from pathlib import Path
 
-import formatter.markdownFormatter as mdf
+from formatter.formatter import Formatter
+from formatter.markdownFormatter import MDFormatter
+from formatter.htmlFormatter import HTMLFormatter
 from reader.pathReader import PathReader
 from reader.urlReader import URLReader
 from reader.seleniumReader import SeleniumReader
@@ -43,10 +45,11 @@ PARSERS = [HtmlJsonParser(), JsonParser()]
 def main():  
     doc = read(ARGS.location)
     parser = parse(doc)
-    formatted = mdf.format(parser)
+    formatter = HTMLFormatter()
+    formatted = formatter.format(parser)
     print(formatted)
     if ARGS.output:
-        write(ARGS.output, f'{parser.title()}.md', formatted)
+        write(ARGS.output, f'{parser.title()}{formatter.suffix()}', formatted)
     
 
 def read(loc:str) -> any:

@@ -1,10 +1,15 @@
 from parser.parser import Parser, InstructionSection
+from formatter.formatter import Formatter
 
-def format(p:Parser) -> str:
-    """Format the data in p as a markdown document
-    """
-    return f"""
-        
+class MDFormatter(Formatter):
+
+    def suffix(self) -> str:
+        return ".md"
+
+    def format(self, p:Parser) -> str:
+        """Format the data in p as a markdown document
+        """
+        return f"""        
 # {p.title()}
 
 {opt('<', p.url(), '>   ')}     
