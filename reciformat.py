@@ -26,10 +26,10 @@ def initArgParser(defaultFormat:Format) -> argparse.Namespace:
     Returns:
         argparse.Namespace: The argument values the user specified to the application
     """
-    parser = argparse.ArgumentParser(prog="reciformat.py", description="Extracts recipe information from a document and reformats it as a new file.")
+    parser = argparse.ArgumentParser(prog="reciformat.py", description="Extracts recipe information from a document and outputs it as in a specific format.")
     parser.add_argument("location", help="Path or URL towards the recipe document")
     parser.add_argument("-f", "--format", help=f"Format of output document. Can be 'html' or 'md' (for markdown). Default: {defaultFormat.value}.", type=Format, default=defaultFormat)
-    parser.add_argument("-o", "--output", help="A directory where the result should be output.")
+    parser.add_argument("-o", "--output", help="A directory where the result should be written as a file. The file will have a name determined by the recipe title. If not specified, the recipe will be written to stdout.")
     parser.add_argument("-c", "--use-chrome", action='store_true', dest="useChrome", help="Some websites need javascript to be accessed. For this we can use a browser that is already installed on the machine. Use this option if normal access to the site causes 4xx status errors")
     return parser.parse_args()
 
